@@ -16,7 +16,7 @@ DB = environ['DB']
 PORT = environ['PORT']
 
 client_mongo = MongoClient('mongodb+srv://' + USER + ':' + PSWD + SERVER + '/' + DB + '?' + urlencode(params))
-collection = DB['properati']
+collection = client_mongo[DB]['properati']
 
 def buscar_por_barrio(barrio):
     result = [objeto for objeto in collection.find(filter={'barrio':(barrio)}, projection={'_id': 0})]

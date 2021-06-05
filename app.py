@@ -1,6 +1,8 @@
 from flask import Flask, json
 import mongodb as db
 
+print(db.PORT)
+
 def get_json(dictionary):
     return app.response_class(response = json.dumps(dictionary), status = 200, mimetype = "application/json")
 
@@ -27,4 +29,4 @@ def tipo(barrio, inmueble):
 
 
 if __name__ == '__main__':
-    app.run(port = db.PORT, debug = True, host="0.0.0.0")
+    app.run(port = db.PORT)
