@@ -1,0 +1,5 @@
+ws2env/
+__pycache__/
+.env
+.vscode/
+
