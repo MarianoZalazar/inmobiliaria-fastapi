@@ -18,7 +18,7 @@ def barrio(barrio):
     return get_json(propiedades_por_barrio)
 
 @app.route('/api/<string:barrio>/<string:tipo>')
-def tipo(barrio, inmueble):
+def tipo(barrio, tipo):
     propiedades_por_barrio_y_tipo = db.buscar_por_barrio_y_tipo(barrio.lower(), tipo.lower())
     return get_json(propiedades_por_barrio_y_tipo)
 
