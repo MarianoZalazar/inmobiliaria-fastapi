@@ -23,6 +23,10 @@ def buscar_por_barrio(barrio):
     result = [objeto for objeto in collection.find(filter={'barrio':(barrio)}, projection={'_id': 0})]
     return result
 
-def buscar_por_barrio_y_tipo(barrio,tipo):
+def buscar_por_barrio_y_tipo(barrio, tipo):
     result = [objeto for objeto in collection.find(filter={'barrio':(barrio), 'tipo':(tipo)}, projection={'_id': 0})]
     return result
+
+#def buscar_por_barrio_y_tipo(barrio, inmueble, tipo):
+#    result = [objeto for objeto in collection.find(filter={'barrio':(barrio), 'inmueble':(inmueble) 'tipo':(tipo)}, projection={'_id': 0})]
+#    return result

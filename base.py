@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import requests
 from mongodb import client_mongo
 
-
 num_pag = 1
 hay_anuncios = True
 list_of_dicts = []
@@ -18,7 +17,7 @@ while hay_anuncios:
     html = response.text
     dom = BeautifulSoup(html, features = "html.parser")
     anuncios = dom.find_all( attrs = { 'class' : 'StyledCard-n9541a-1 ixiyWf' })
-# ¿hay una lista de 'anuncios'?
+    # ¿hay una lista de 'anuncios'?
     if anuncios != []:
         for anuncio in anuncios:
             titulo_anuncio = anuncio.find(class_='StyledCardInfo-n9541a-2 ctwAhK').a.h2.text

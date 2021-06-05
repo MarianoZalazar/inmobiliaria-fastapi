@@ -6,7 +6,6 @@ def get_json(dictionary):
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def home():
     return "Hello Flask"
@@ -17,9 +16,15 @@ def barrio(barrio):
     return get_json(propiedades_por_barrio)
 
 @app.route('/api/<string:barrio>/<string:tipo>')
-def tipo(barrio, tipo):
+def tipo(barrio, inmueble):
     propiedades_por_barrio_y_tipo = db.buscar_por_barrio_y_tipo(barrio.lower(), tipo.lower())
     return get_json(propiedades_por_barrio_y_tipo)
+
+#@app.route('/api/<string:barrio>/<string:inmueble>/<string:tipo>')
+#def tipo(barrio, inmueble, tipo):
+    propiedades_por_barrio_y_tipo = db.buscar_por_barrio_y_tipo(barrio.lower(), inmueble.lower(), tipo.lower())
+    return get_json(propiedades_por_barrio_y_tipo)
+
 
 if __name__ == '__main__':
     app.run(port = PORT, debug = True, host="0.0.0.0")
