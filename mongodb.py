@@ -14,5 +14,15 @@ PSWD = environ['PSWD']
 SERVER = environ['SERVER']
 DB = environ['DB']
 PORT = environ['PORT']
-client = MongoClient('mongodb+srv://' + USER + ':' + PSWD + SERVER + '/' + DB + '?' + urlencode(params))
-db = client['workshop2']
+
+client_mongo = MongoClient('mongodb+srv://' + USER + ':' + PSWD + SERVER + '/' + DB + '?' + urlencode(params))
+db = client_mongo['worshop2']
+collection = db['properati']
+
+def buscar_por_barrio(barrio):
+    result = [objeto for objeto in collection.find(filter={'barrio':(barrio)}, projection={'_id': 0})]
+    return result
+
+def buscar_por_barrio_y_tipo(barrio,tipo):
+    result = [objeto for objeto in collection.find(filter={'barrio':(barrio), 'tipo':(tipo)}, projection={'_id': 0})]
+    return result
