@@ -16,7 +16,7 @@ DB = environ['DB']
 PORT = environ['PORT']
 
 client_mongo = MongoClient('mongodb+srv://' + USER + ':' + PSWD + SERVER + '/' + DB + '?' + urlencode(params))
-collection = client_mongo[DB]['properati']
+collection = client_mongo[DB]['propiedades']
 
 def insertar_anuncios(lista_de_anuncios):
     if lista_de_anuncios != []:
@@ -36,3 +36,5 @@ def buscar_por_barrio_inmueble(barrio, inmueble):
 def buscar_por_barrio_inmueble_tipo(barrio, inmueble, tipo):
     result = [objeto for objeto in collection.find(filter={'barrio':(barrio), 'inmueble':(inmueble), 'tipo':(tipo)}, projection={'_id': 0})]
     return result
+
+    
