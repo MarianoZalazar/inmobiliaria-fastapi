@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import json
 from datetime import datetime
-from unidecode import unidecodefrom
+from unidecode import unidecode
 from mongodb import insertar_anuncios
 #import pprint
 

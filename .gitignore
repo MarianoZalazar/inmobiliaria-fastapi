@@ -1,4 +1,4 @@
-ws2env/
+fastapienv/
 __pycache__/
 .env
 .vscode/
