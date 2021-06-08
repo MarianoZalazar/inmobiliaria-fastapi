@@ -1,7 +1,7 @@
+import motor.motor_asyncio as motor
 import settings
 from os import environ
 from urllib.parse import urlencode
-from pymongo import MongoClient
 
 params = {'retryWrites': 'true',
           'w': 'majority',
@@ -15,26 +15,41 @@ SERVER = environ['SERVER']
 DB = environ['DB']
 PORT = environ['PORT']
 
-client_mongo = MongoClient('mongodb+srv://' + USER + ':' + PSWD + SERVER + '/' + DB + '?' + urlencode(params))
-collection = client_mongo[DB]['propiedades']
+client = motor.AsyncIOMotorClient(f"mongodb+srv://{USER}:{PSWD}{SERVER}/{DB}?{urlencode(params)}")
+bd = client[DB]
+collection = bd['propiedades']
 
-def insertar_anuncios(lista_de_anuncios):
-    if lista_de_anuncios != []:
-        print('Insertando')
-        collection.insert_many(lista_de_anuncios)
-    else:
-        print("No hay resultados")
 
-def buscar_por_barrio(barrio):
-    result = [objeto for objeto in collection.find(filter={'barrio':(barrio)}, projection={'_id': 0})]
-    return result
+#Usar for loops en vez de list comprehension para mejor entendimiento
 
-def buscar_por_barrio_inmueble(barrio, inmueble):
-    result = [objeto for objeto in collection.find(filter={'barrio':(barrio), 'inmueble':(inmueble)}, projection={'_id': 0})]
-    return result
+async def buscar_por_tipo(tipo):
+    lista_de_anuncios = []
+    async for anuncio in collection.find(filter={'tipo': tipo},projection={'_id': 0}):
+        lista_de_anuncios.append(anuncio)
+    return lista_de_anuncios
 
-def buscar_por_barrio_inmueble_tipo(barrio, inmueble, tipo):
-    result = [objeto for objeto in collection.find(filter={'barrio':(barrio), 'inmueble':(inmueble), 'tipo':(tipo)}, projection={'_id': 0})]
-    return result
+async def buscar_por_barrio(barrio):
+    lista_de_anuncios = []
+    async for anuncio in collection.find(filter={'barrio': barrio},
+                                         projection={'_id': 0}):
+        lista_de_anuncios.append(anuncio)
+    return lista_de_anuncios
 
-    
+async def buscar_por_barrio_inmueble(barrio, inmueble):
+    lista_de_anuncios = []
+    async for anuncio in collection.find(filter={'barrio': barrio, 'inmueble': inmueble},
+                                         projection={'_id': 0}):
+        lista_de_anuncios.append(anuncio)
+    return lista_de_anuncios
+
+async def buscar_por_barrio_inmueble_tipo(barrio, inmueble, tipo):
+    lista_de_anuncios = []
+    async for anuncio in collection.find(filter={'barrio': barrio, 'inmueble': inmueble, 'tipo': tipo},
+                                         projection={'_id': 0}):
+        lista_de_anuncios.append(anuncio)
+    return lista_de_anuncios
+
+async def insertar_anuncio(anuncio):
+    new_anuncio = await collection.insert_one(anuncio)
+    anuncio_creado = await collection.find_one(filter={"_id": new_anuncio.inserted_id}, projection={'_id': 0})
+    return anuncio_creado
