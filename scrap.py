@@ -3,8 +3,9 @@ import requests
 import json
 from datetime import datetime
 from unidecode import unidecode
-from mongodb import insertar_anuncios
-#import pprint
+from mongodb import insertar_varios_anuncios
+from models.anuncio import Anuncio
+import pprint
 
 
 lista_de_anuncios = []
@@ -37,14 +38,13 @@ for tipo in ['venta', 'alquiler']:
         html = response.text
         dom = BeautifulSoup(html, features="html.parser")
 
-        anuncios = dom.find_all(class_=clase_lista_de_anuncios)
         # ¿hay una lista de 'anuncios'?
-        if anuncios != []:
+        if ((anuncios := dom.find_all(class_=clase_lista_de_anuncios))!= []):
             for anuncio in anuncios:
                 titulo_anuncio = anuncio.find(class_=clase_titulo).a.h2.text
                 precio = anuncio.find(class_=clase_precio)
                 expensas = anuncio.find(class_=clase_expensas)
-                barrio = anuncio.find(class_=clase_barrio).text.split(',')[0].split('/')[0].replace(' ', '-')  # Limpiar barrio
+                barrio = anuncio.find(class_=clase_barrio).text.split(',')[0].replace(' / ', '-').replace(' ', '-')  # Limpiar barrio
                 inmueble = titulo_anuncio.split()[0]
                 vendedor = anuncio.find(class_=clase_vendedor)
                 fecha_publicacion = datetime.strptime(anuncio.find(class_=clase_fecha).text, '%d/%m/%Y')
@@ -58,21 +58,23 @@ for tipo in ['venta', 'alquiler']:
                 expensas = expensas.text.split('\xa0')[1].replace('.', '') if expensas != None else expensas
                 vendedor = vendedor.text if vendedor != None else vendedor
 
-                dict_anuncios = {
-                    "titulo": titulo_anuncio,
-                    "expensas": expensas,
-                    "barrio": unidecode(barrio.lower()),
-                    "inmueble": inmueble.lower(),
-                    "precio_dolar": precio_dolar,
-                    "precio_peso": precio_peso,
-                    "fecha_publicacion": fecha_publicacion,
-                    "vendedor": vendedor.lower(),
-                    "tipo": tipo
-                }
+                anuncio = Anuncio(
+                    titulo=titulo_anuncio,
+                    expensas=expensas,
+                    barrio=barrio,
+                    inmueble=inmueble,
+                    precio_dolar=precio_dolar,
+                    precio_peso=precio_peso,
+                    fecha_publicacion=fecha_publicacion,
+                    vendedor=vendedor.lower(),
+                    tipo=tipo)
+                
 
-                lista_de_anuncios.append(dict_anuncios)
+                lista_de_anuncios.append(anuncio.dict())
             num_pag += 1
         else:
             hay_anuncios = False
 
-insertar_anuncios(lista_de_anuncios)
+
+#pprint.pprint(lista_de_anuncios)
+insertar_varios_anuncios(lista_de_anuncios)
