@@ -3,9 +3,9 @@ import requests
 import json
 from datetime import datetime
 from unidecode import unidecode
-from mongodb import insertar_varios_anuncios
 from models.anuncio import Anuncio
 import pprint
+from mongodb import insertar_anuncios
 
 
 lista_de_anuncios = []
@@ -21,7 +21,8 @@ clase_fecha = 'StyledTooltip-n9541a-0 eeGwaF'
 clase_vendedor = 'seller-name'
 
 # Obtener valor del dolar a traves de una API
-response_dolar_api = requests.get('https://api-dolar-argentina.herokuapp.com/api/dolarpromedio')
+response_dolar_api = requests.get(
+    'https://api-dolar-argentina.herokuapp.com/api/dolarpromedio')
 valor_dolar = json.loads(response_dolar_api.text)
 valor_compra = float(valor_dolar["compra"])
 valor_venta = float(valor_dolar["venta"])
@@ -39,23 +40,26 @@ for tipo in ['venta', 'alquiler']:
         dom = BeautifulSoup(html, features="html.parser")
 
         # ¿hay una lista de 'anuncios'?
-        if ((anuncios := dom.find_all(class_=clase_lista_de_anuncios))!= []):
+        if ((anuncios := dom.find_all(class_=clase_lista_de_anuncios)) != []):
             for anuncio in anuncios:
                 titulo_anuncio = anuncio.find(class_=clase_titulo).a.h2.text
                 precio = anuncio.find(class_=clase_precio)
                 expensas = anuncio.find(class_=clase_expensas)
-                barrio = anuncio.find(class_=clase_barrio).text.split(',')[0].replace(' / ', '-').replace(' ', '-')  # Limpiar barrio
+                barrio = anuncio.find(class_=clase_barrio).text.split(
+                    ',')[0].replace(' / ', '-').replace(' ', '-')  # Limpiar barrio
                 inmueble = titulo_anuncio.split()[0]
                 vendedor = anuncio.find(class_=clase_vendedor)
-                fecha_publicacion = datetime.strptime(anuncio.find(class_=clase_fecha).text, '%d/%m/%Y')
+                fecha_publicacion = datetime.strptime(
+                    anuncio.find(class_=clase_fecha).text, '%d/%m/%Y')
 
                 if precio != None:
                     moneda = precio.text.split()[0]
-                    precio = float(precio.text.split()[1].replace('.', '').replace(',', '.'))
-                    precio_peso = round(precio * valor_venta, 2) if moneda == 'USD' else precio
-                    precio_dolar = round(precio_peso / valor_compra, 2)
+                    moneda = 'ARS' if moneda == '$' else moneda
+                    precio = float(precio.text.split()[
+                                   1].replace('.', '').replace(',', '.'))
 
-                expensas = expensas.text.split('\xa0')[1].replace('.', '') if expensas != None else expensas
+                expensas = expensas.text.split('\xa0')[1].replace(
+                    '.', '') if expensas != None else expensas
                 vendedor = vendedor.text if vendedor != None else vendedor
 
                 anuncio = Anuncio(
@@ -63,12 +67,11 @@ for tipo in ['venta', 'alquiler']:
                     expensas=expensas,
                     barrio=barrio,
                     inmueble=inmueble,
-                    precio_dolar=precio_dolar,
-                    precio_peso=precio_peso,
+                    precio=precio,
+                    moneda=moneda,
                     fecha_publicacion=fecha_publicacion,
                     vendedor=vendedor.lower(),
                     tipo=tipo)
-                
 
                 lista_de_anuncios.append(anuncio.dict())
             num_pag += 1
@@ -76,5 +79,5 @@ for tipo in ['venta', 'alquiler']:
             hay_anuncios = False
 
 
-#pprint.pprint(lista_de_anuncios)
-insertar_varios_anuncios(lista_de_anuncios)
+# pprint.pprint(lista_de_anuncios)
+insertar_anuncios(lista_de_anuncios)
