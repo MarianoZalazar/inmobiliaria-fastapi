@@ -2,6 +2,7 @@ aiofiles==0.5.0
 aniso8601==7.0.0
 async-exit-stack==1.0.1
 async-generator==1.10
+autopep8==1.5.7
 beautifulsoup4==4.9.3
 bs4==0.0.1
 certifi==2021.5.30
@@ -19,8 +20,10 @@ idna==2.10
 itsdangerous==1.1.0
 Jinja2==2.11.3
 MarkupSafe==2.0.1
+motor==2.4.0
 orjson==3.5.3
 promise==2.3
+pycodestyle==2.7.0
 pydantic==1.8.2
 pymongo==3.11.4
 python-dotenv==0.17.1
@@ -31,6 +34,7 @@ Rx==1.6.1
 six==1.16.0
 soupsieve==2.2.1
 starlette==0.14.2
+toml==0.10.2
 typing-extensions==3.10.0.0
 ujson==4.0.2
 Unidecode==1.2.0
