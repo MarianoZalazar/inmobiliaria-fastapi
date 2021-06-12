@@ -34,7 +34,7 @@ async def buscar_anuncios(diccionario_filtros, query):
     diccionario_filtros.update(query.moneda)
     lista_de_anuncios = []
     async for anuncio in collection.find(filter=diccionario_filtros
-                                         ).sort([('fecha_publicacion', query.sort_date), ('precio', query.sort_precio)]).limit(query.limit):
+                                         ).sort([('fecha_publicacion', query.sort_date)]).limit(query.limit):
         lista_de_anuncios.append(anuncio)
     return lista_de_anuncios
 
