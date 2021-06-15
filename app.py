@@ -3,7 +3,6 @@ from starlette.responses import RedirectResponse
 from typing import List
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-
 import examples
 from models.anuncio import Anuncio, Anuncio_actualizar
 from models.commonquery import CommonQueryModel
@@ -20,7 +19,6 @@ async def root():
     return response
 
 ##############################################################################
-
 
 @app.get('/api/{barrio_o_tipo}',
          response_description='Obtener lista de anuncios por barrio o tipo de operacion',
@@ -117,4 +115,3 @@ async def borrar_anuncio(id: str = Path(..., example='fd23114h2y0719d46ba9')):
     if anuncio_eliminado.deleted_count == 1:
         return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
     raise HTTPException(status_code=404, detail=f"Anuncio {id} not found")
-

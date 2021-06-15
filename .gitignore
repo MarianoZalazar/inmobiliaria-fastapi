@@ -2,7 +2,3 @@ fastapienv/
 __pycache__/
 .env
 .vscode/
-chromedriver
-depr.txt
-flaskapp.py
-pymongodb.py
