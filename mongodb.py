@@ -29,9 +29,6 @@ def insertar_anuncios(lista_de_anuncios):
 
 
 async def buscar_anuncios(diccionario_filtros, query):
-    query.moneda = {
-        "moneda": query.moneda} if query.moneda != dict() else query.moneda
-    diccionario_filtros.update(query.moneda)
     lista_de_anuncios = []
     async for anuncio in collection.find(filter=diccionario_filtros
                                          ).sort([('fecha_publicacion', query.sort_date)]).limit(query.limit):

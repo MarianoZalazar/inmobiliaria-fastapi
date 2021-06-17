@@ -31,9 +31,9 @@ async def get_by_barrio_o_tipo(barrio_o_tipo: str = Path(..., title="Un barrio o
                                q: CommonQueryModel = Depends(CommonQueryModel)
                                ):
     if barrio_o_tipo == 'venta' or barrio_o_tipo == 'alquiler':
-        lista_anuncios = await db.buscar_anuncios({'tipo': barrio_o_tipo.lower()}, q)
+        lista_anuncios = await db.buscar_anuncios({'tipo': barrio_o_tipo.lower(), "precio": q.moneda}, q)
     else:
-        lista_anuncios = await db.buscar_anuncios({'barrio': barrio_o_tipo.lower()}, q)
+        lista_anuncios = await db.buscar_anuncios({'barrio': barrio_o_tipo.lower(), "precio": q.moneda}, q)
 
     if len(lista_anuncios) >= 1:
         return lista_anuncios
@@ -52,7 +52,7 @@ async def get_by_barrio_inmueble(barrio: str = Path(...,
                                  inmueble: str = Path(..., title="Tipo de inmueble",
                                                       example="departamento"),
                                  q: CommonQueryModel = Depends(CommonQueryModel)):
-    lista_anuncios = await db.buscar_anuncios({'barrio': barrio.lower(), 'inmueble': inmueble.lower()}, q)
+    lista_anuncios = await db.buscar_anuncios({'barrio': barrio.lower(), 'inmueble': inmueble.lower(), "precio": q.moneda}, q)
     if len(lista_anuncios) >= 1:
         return lista_anuncios
 
@@ -72,7 +72,10 @@ async def get_by_barrio_inmueble_tipo(barrio: str = Path(...,
                                       tipo: str = Path(
                                           ..., title="Tipo de operacion alquiler/venta", example="alquiler"),
                                       q: CommonQueryModel = Depends(CommonQueryModel)):
-    lista_anuncios = await db.buscar_anuncios({'barrio': barrio.lower(), 'inmueble': inmueble.lower(), 'tipo': tipo.lower()}, q)
+    lista_anuncios = await db.buscar_anuncios({'barrio': barrio.lower(), 
+                                               'inmueble': inmueble.lower(), 
+                                               'tipo': tipo.lower(), 
+                                               "precio": q.moneda}, q)
     if len(lista_anuncios) >= 1:
         return lista_anuncios
 
