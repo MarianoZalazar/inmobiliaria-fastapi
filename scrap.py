@@ -20,14 +20,6 @@ clase_barrio = 'StyledLocation-n9541a-7 fqaBNm'
 clase_fecha = 'StyledTooltip-n9541a-0 eeGwaF'
 clase_vendedor = 'seller-name'
 
-# Obtener valor del dolar a traves de una API
-response_dolar_api = requests.get(
-    'https://api-dolar-argentina.herokuapp.com/api/dolarpromedio')
-valor_dolar = json.loads(response_dolar_api.text)
-valor_compra = float(valor_dolar["compra"])
-valor_venta = float(valor_dolar["venta"])
-
-
 for tipo in ['venta', 'alquiler']:
     hay_anuncios = True
     num_pag = 1
