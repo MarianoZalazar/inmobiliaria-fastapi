@@ -10,10 +10,7 @@ from models.commonquery import CommonQueryModel
 import mongodb as db
 
 def check_list_len(lista_anuncios, resource="Resource"):
-    if len(lista_anuncios) >= 1:
-        return True
-    else:
-        raise HTTPException(status_code=404, detail=f"{resource} not found")
+    return len(lista_anuncios)>=1 or HTTPException(status_code=404, detail=f"{resource} not found")
 
 app = FastAPI(title="Inmobiliaria API",
               description="API para disponibilizacion de datos sobre propiedades en CABA. Informacion conseguida a traves de Properati"
