@@ -3,10 +3,17 @@ from starlette.responses import RedirectResponse
 from typing import List
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
+
 import examples
 from models.anuncio import Anuncio, Anuncio_actualizar
 from models.commonquery import CommonQueryModel
 import mongodb as db
+
+def check_list_len(lista_anuncios, resource="Resource"):
+    if len(lista_anuncios) >= 1:
+        return True
+    else:
+        raise HTTPException(status_code=404, detail=f"{resource} not found")
 
 app = FastAPI(title="Inmobiliaria API",
               description="API para disponibilizacion de datos sobre propiedades en CABA. Informacion conseguida a traves de Properati"
@@ -31,14 +38,12 @@ async def get_by_barrio_o_tipo(barrio_o_tipo: str = Path(..., title="Un barrio o
                                q: CommonQueryModel = Depends(CommonQueryModel)
                                ):
     if barrio_o_tipo == 'venta' or barrio_o_tipo == 'alquiler':
-        lista_anuncios = await db.buscar_anuncios({'tipo': barrio_o_tipo.lower(), "precio": q.moneda}, q)
+        lista_anuncios = await db.buscar_anuncios({"tipo": barrio_o_tipo.lower(), **q.moneda}, q)
     else:
-        lista_anuncios = await db.buscar_anuncios({'barrio': barrio_o_tipo.lower(), "precio": q.moneda}, q)
-
-    if len(lista_anuncios) >= 1:
+        lista_anuncios = await db.buscar_anuncios({"barrio": barrio_o_tipo.lower(), **q.moneda}, q)
+        
+    if check_list_len(lista_anuncios, barrio_o_tipo):
         return lista_anuncios
-
-    raise HTTPException(status_code=404, detail=f"{barrio_o_tipo} not found")
 
 ##############################################################################
 
@@ -52,11 +57,9 @@ async def get_by_barrio_inmueble(barrio: str = Path(...,
                                  inmueble: str = Path(..., title="Tipo de inmueble",
                                                       example="departamento"),
                                  q: CommonQueryModel = Depends(CommonQueryModel)):
-    lista_anuncios = await db.buscar_anuncios({'barrio': barrio.lower(), 'inmueble': inmueble.lower(), "precio": q.moneda}, q)
-    if len(lista_anuncios) >= 1:
+    lista_anuncios = await db.buscar_anuncios({'barrio': barrio.lower(), 'inmueble': inmueble.lower(), **q.moneda}, q)
+    if check_list_len(lista_anuncios):
         return lista_anuncios
-
-    raise HTTPException(status_code=404, detail=f"Resource not found")
 
 ##############################################################################
 
@@ -74,12 +77,10 @@ async def get_by_barrio_inmueble_tipo(barrio: str = Path(...,
                                       q: CommonQueryModel = Depends(CommonQueryModel)):
     lista_anuncios = await db.buscar_anuncios({'barrio': barrio.lower(), 
                                                'inmueble': inmueble.lower(), 
-                                               'tipo': tipo.lower(), 
-                                               "precio": q.moneda}, q)
-    if len(lista_anuncios) >= 1:
-        return lista_anuncios
-
-    raise HTTPException(status_code=404, detail=f"Resource not found")
+                                               'tipo': tipo.lower(),
+                                               **q.moneda}, q)
+    if check_list_len(lista_anuncios):
+        return lista_anuncios 
 
 ##############################################################################
 
@@ -101,12 +102,10 @@ async def publicar_anuncio(anuncio: Anuncio = Body(..., example=examples.post_ex
 async def actualizar_anuncio(id: str = Path(..., example='fd23114h2y0719d46ba9'),
                              anuncio: Anuncio_actualizar = Body(..., example=examples.put_example)):
     anuncio = {k: v for k, v in anuncio.dict().items() if v is not None}
-    if len(anuncio) >= 1:
+    if check_list_len(lista_anuncios, f"Anuncio {id}"):
         anuncio_actualizado = await db.actualizar_anuncio(id, anuncio)
         if anuncio_actualizado is not None:
             return anuncio_actualizado
-
-    raise HTTPException(status_code=404, detail=f"Anuncio {id} not found")
 
 ##############################################################################
 

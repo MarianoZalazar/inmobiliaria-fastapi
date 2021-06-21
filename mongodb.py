@@ -29,6 +29,7 @@ def insertar_anuncios(lista_de_anuncios):
 
 
 async def buscar_anuncios(diccionario_filtros, query):
+    print(diccionario_filtros)
     lista_de_anuncios = []
     async for anuncio in collection.find(filter=diccionario_filtros
                                          ).sort([('fecha_publicacion', query.sort_date)]).limit(query.limit):
