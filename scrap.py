@@ -4,7 +4,6 @@ import json
 from datetime import datetime
 from unidecode import unidecode
 from models.anuncio import Anuncio
-import pprint
 from mongodb import insertar_anuncios
 
 
@@ -71,5 +70,4 @@ for tipo in ['venta', 'alquiler']:
             hay_anuncios = False
 
 
-# pprint.pprint(lista_de_anuncios)
 insertar_anuncios(lista_de_anuncios)
